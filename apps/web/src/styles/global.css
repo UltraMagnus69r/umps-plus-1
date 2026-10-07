@@ -21,6 +21,11 @@
   --sb-accent-hover: #1a73e8;
   --sb-accent-active: #0f9d58;
   --sb-shadow-soft: 0 1px 2px rgba(60, 64, 67, 0.15), 0 4px 10px rgba(60, 64, 67, 0.1);
+  --sb-shadow-pressable: 0 1px 0 rgba(255, 255, 255, 0.45) inset, 0 1px 2px rgba(60, 64, 67, 0.16);
+  --sb-glow-soft: color-mix(in srgb, #1a73e8 20%, transparent);
+  --sb-glow-strong: color-mix(in srgb, #a7d3e8 35%, transparent);
+  --sb-ring: color-mix(in srgb, #1a73e8 58%, #f0f0e8);
+
   --gg-blue: #4285f4;
   --gg-red: #db4437;
   --gg-yellow: #f4b400;
@@ -28,6 +33,26 @@
   --gg-core-blue: #1a73e8;
   --gg-grey: #5f6368;
   --gg-cloud: #f0f0e8;
+
+  --ui-color-primary: var(--sb-accent);
+  --ui-color-primary-hover: var(--sb-accent-hover);
+  --ui-color-primary-active: var(--sb-accent-active);
+  --ui-color-on-primary: #ffffff;
+  --ui-color-surface: var(--sb-surface);
+  --ui-color-surface-elevated: var(--sb-surface-elevated);
+  --ui-color-surface-muted: var(--sb-surface-soft);
+  --ui-color-text: var(--sb-text);
+  --ui-color-text-strong: var(--sb-text-strong);
+  --ui-color-muted: var(--sb-text-muted);
+  --ui-color-border: var(--sb-border);
+  --ui-border-hairline: color-mix(in srgb, var(--ui-color-border) 32%, transparent);
+  --ui-border-panel-elevated: color-mix(in srgb, var(--ui-color-border) 50%, transparent);
+  --ui-border-panel-inset: color-mix(in srgb, var(--ui-color-border) 22%, transparent);
+  --ui-color-accent-green: var(--gg-green);
+  --ui-color-danger: #b91c1c;
+  --ui-color-danger-surface: #fef2f2;
+  --ui-color-danger-border: #fecaca;
+  --ui-color-danger-text: #991b1b;
 
   --bg: var(--sb-bg);
   --bg-elev: var(--sb-surface);
@@ -41,10 +66,11 @@
   --accent: var(--sb-accent);
   --accent-ink: #ffffff;
   --focus: var(--gg-core-blue);
-  --danger: #b91c1c;
+  --danger: var(--ui-color-danger);
   --shadow-stage: var(--sb-shadow-soft);
 }
 
+/* Shell bridge when EditorShell sets data-app-theme="googled" */
 [data-app-theme='googled'] {
   color-scheme: light;
   --bg: var(--sb-bg);
@@ -59,17 +85,13 @@
   --accent: var(--sb-accent);
   --accent-ink: #ffffff;
   --focus: var(--gg-core-blue);
-  --danger: #b91c1c;
+  --danger: var(--ui-color-danger);
   --shadow-stage: var(--sb-shadow-soft);
 }
 
-/*
- * Legacy UMPS used data-app-theme="googled". When theme tokens land in
- * Project store (internal/umps-googled-theme.md|.css), override chrome vars
- * here — top bar, panels, buttons, sheets — without dumping full legacy CSS.
- */
-:root[data-app-theme='googled'] {
-  /* pending googled tokens */
+[data-app-theme='googled'] .app-frame,
+[data-app-theme='googled'].app-frame {
+  background: var(--bg-stage);
 }
 
 *,
