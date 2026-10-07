@@ -1,0 +1,57 @@
+:root {
+  color-scheme: dark;
+  --bg: #14181c;
+  --bg-elev: #1c2228;
+  --bg-stage: radial-gradient(120% 80% at 50% 30%, #2a323a 0%, #12161a 55%, #0b0e11 100%);
+  --line: rgba(232, 224, 208, 0.12);
+  --text: #ebe6dc;
+  --text-dim: #9aa3ad;
+  --accent: #d4a040;
+  --accent-ink: #1a1408;
+  --focus: #7eb8c9;
+  --danger: #c46b5a;
+  --radius: 10px;
+  --font-ui: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --font-card: 'Source Serif 4', Georgia, serif;
+  --shadow-stage: 0 24px 60px rgba(0, 0, 0, 0.45);
+  --topbar-h: 3.5rem;
+  --inspector-w: min(22rem, 100%);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
