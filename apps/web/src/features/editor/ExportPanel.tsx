@@ -4,7 +4,11 @@ import {
   safeFilename,
 } from '@/domain/export/png'
 import type { ExportSizeMode } from '@/domain/export/render'
-import { sizeLabel } from '@/domain/export/render'
+import {
+  exportFlattenedPng,
+  exportLayerPackZip,
+  sizeLabel,
+} from '@/domain/export/render'
 import {
   blobToImage,
   chunkForSheets,
@@ -74,11 +78,13 @@ export function ExportPanel({ stageRef }: Props) {
     }
   }
 
+  // Export via domain helpers + live art from the stage. Do not call
+  // handle.exportFlattenedPng — that path raced with HMR/handle rebinds.
+  const artFromStage = () => stageRef.current?.getArtImage() ?? null
+
   const onExportFlat = () =>
     withBusy('Exporting PNG…', async () => {
-      const handle = stageRef.current
-      if (!handle) throw new Error('Stage not ready')
-      const blob = await handle.exportFlattenedPng({
+      const blob = await exportFlattenedPng(card, artFromStage(), {
         sizeMode,
         transparent: false,
       })
@@ -88,9 +94,7 @@ export function ExportPanel({ stageRef }: Props) {
 
   const onExportTransparent = () =>
     withBusy('Exporting transparent PNG…', async () => {
-      const handle = stageRef.current
-      if (!handle) throw new Error('Stage not ready')
-      const blob = await handle.exportFlattenedPng({
+      const blob = await exportFlattenedPng(card, artFromStage(), {
         sizeMode,
         transparent: true,
       })
@@ -100,19 +104,15 @@ export function ExportPanel({ stageRef }: Props) {
 
   const onExportLayers = () =>
     withBusy('Building layer pack…', async () => {
-      const handle = stageRef.current
-      if (!handle) throw new Error('Stage not ready')
-      const zip = await handle.exportLayerPackZip(sizeMode)
+      const zip = await exportLayerPackZip(card, artFromStage(), sizeMode)
       const suffix = sizeMode === 'bleed' ? 'bleed' : 'trim'
       downloadBlob(zip, `${safeFilename(card.name)}-layers-${suffix}.zip`)
     })
 
   const onAddToQueue = () =>
     withBusy('Adding to print queue…', async () => {
-      const handle = stageRef.current
-      if (!handle) throw new Error('Stage not ready')
       // Queue stores trim, opaque print-ready faces for sheet placement.
-      const blob = await handle.exportFlattenedPng({
+      const blob = await exportFlattenedPng(card, artFromStage(), {
         sizeMode: 'trim',
         transparent: false,
       })

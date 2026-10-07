@@ -41,9 +41,10 @@ export function CardStage({ card, showGuides = false, stageRef }: Props) {
 
   useEffect(() => {
     if (!stageRef) return
-    // Bind once; read live card/art through refs so exports stay current
-    // without recreating the handle (avoids HMR/stale-method gaps).
-    stageRef.current = {
+    // Bind once; read live card/art through refs so exports stay current.
+    // Only clear on unmount if this effect's handle is still installed
+    // (Strict Mode cleanup must not wipe a newer bind).
+    const handle: CardStageHandle = {
       getArtImage: () => artImageRef.current,
       renderFlattened: (opts) =>
         renderCardCanvas(cardRef.current, artImageRef.current, opts),
@@ -58,8 +59,9 @@ export function CardStage({ card, showGuides = false, stageRef }: Props) {
           sizeMode: 'bleed',
         }),
     }
+    stageRef.current = handle
     return () => {
-      stageRef.current = null
+      if (stageRef.current === handle) stageRef.current = null
     }
   }, [stageRef])
 
