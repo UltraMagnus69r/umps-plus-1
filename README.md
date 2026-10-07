@@ -1,3 +1,3 @@
-# Project Plus One
+# UMPS+1
 
-This is the starting repository for the project.
+This is the starting repository for UMPS+1.
