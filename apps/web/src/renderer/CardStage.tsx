@@ -1,24 +1,14 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import type { CardDocument } from '@/domain/card/document'
-import type { ExportSizeMode, FlattenExportOptions } from '@/domain/export/render'
-import {
-  exportFlattenedPng,
-  exportLayerPackZip,
-  renderCardCanvas,
-  renderLayerCanvas,
-} from '@/domain/export/render'
+import { renderCardCanvas } from '@/domain/export/render'
 import { STAGE_HEIGHT, STAGE_WIDTH } from '@/domain/geometry/constants'
-import { drawCard, type CardLayerId } from '@/renderer/drawCard'
+import { drawCard } from '@/renderer/drawCard'
 import styles from '@/styles/shell.module.css'
 
 export type CardStageHandle = {
   /** Live art bitmap used by the stage (may be null). */
   getArtImage: () => HTMLImageElement | null
-  renderFlattened: (opts: FlattenExportOptions) => HTMLCanvasElement
-  renderLayer: (layer: CardLayerId, sizeMode: ExportSizeMode) => HTMLCanvasElement
-  exportFlattenedPng: (opts: FlattenExportOptions) => Promise<Blob>
-  exportLayerPackZip: (sizeMode: ExportSizeMode) => Promise<Blob>
-  /** @deprecated Prefer renderFlattened / exportFlattenedPng */
+  /** Full-bleed opaque flatten helper. */
   exportCanvas: () => HTMLCanvasElement
 }
 
@@ -31,24 +21,27 @@ type Props = {
 export function CardStage({ card, showGuides = false, stageRef }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
+  const cardRef = useRef(card)
+  const artImageRef = useRef<HTMLImageElement | null>(null)
   const [artImage, setArtImage] = useState<HTMLImageElement | null>(null)
   const [scale, setScale] = useState(0.25)
+
+  cardRef.current = card
+  artImageRef.current = artImage
 
   useEffect(() => {
     if (!stageRef) return
     stageRef.current = {
-      getArtImage: () => artImage,
-      renderFlattened: (opts) => renderCardCanvas(card, artImage, opts),
-      renderLayer: (layer, sizeMode) =>
-        renderLayerCanvas(card, artImage, layer, sizeMode),
-      exportFlattenedPng: (opts) => exportFlattenedPng(card, artImage, opts),
-      exportLayerPackZip: (sizeMode) => exportLayerPackZip(card, artImage, sizeMode),
-      exportCanvas: () => renderCardCanvas(card, artImage, { sizeMode: 'bleed' }),
+      getArtImage: () => artImageRef.current,
+      exportCanvas: () =>
+        renderCardCanvas(cardRef.current, artImageRef.current, {
+          sizeMode: 'bleed',
+        }),
     }
     return () => {
       stageRef.current = null
     }
-  }, [stageRef, card, artImage])
+  }, [stageRef])
 
   useEffect(() => {
     if (!card.artUrl) {
