@@ -16,7 +16,7 @@ type CardState = {
   patchCard: (patch: Partial<CardDocument>) => void
   patchArt: (patch: Partial<ArtPlacement>) => void
   setArtUrl: (url: string | null) => void
-  /** Replace the whole document (vault hydrate). Revokes prior blob art. */
+  /** Replace the whole document (e.g. Scryfall apply). Revokes prior blob art. */
   replaceCard: (card: CardDocument) => void
   resetCard: () => void
 }

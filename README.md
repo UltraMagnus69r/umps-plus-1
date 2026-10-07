@@ -4,7 +4,7 @@ Greenfield custom card editor. Print-ready Magic proxies from Scryfall + custom 
 
 Phase 1: Vite/React web app with a card-first responsive shell, 600 DPI stage math, and flattened PNG export (pHYs tagged).
 
-Phase 2: Scryfall import (online) + light IndexedDB vault for the current card/art.
+Phase 2: Scryfall import (online) + IndexedDB vault helpers (no auto-restore on refresh).
 
 Legacy UMPS is archive-only and is not part of this tree.
 
@@ -44,7 +44,7 @@ Scryfall lookup is **online-only**. The typed client lives in [`packages/scryfal
 - Requests are lightly rate-gated (~110 ms); UA identifies as `UMPS-Plus-1/0.1` when the runtime allows it
 - Needs a network path to `api.scryfall.com` / `cards.scryfall.io` — there is no offline card database in this slice
 
-The last edited card (fields + art blob) is kept in an IndexedDB vault so a refresh restores your work. Scryfall search itself still requires the network.
+A browser refresh starts from a blank card: the vault is cleared on load and does not auto-hydrate. Explicit “save last card” can come later. Scryfall search itself still requires the network.
 
 ## Phase scope
 
@@ -59,7 +59,7 @@ The last edited card (fields + art blob) is kept in an IndexedDB vault so a refr
 **Phase 2 (this)**
 
 - Scryfall client + UI apply flow
-- Light offline vault (current card + art)
+- Vault helpers (IndexedDB); refresh wipes — no auto-restore
 
 Not yet: bulk KEEP/asset library port, print sheets, Tauri/Capacitor, transparent layer packs, multi-user, Warframe.
 

@@ -19,6 +19,15 @@
   --safe-b: env(safe-area-inset-bottom, 0px);
 }
 
+/*
+ * Legacy UMPS used data-app-theme="googled". When theme tokens land in
+ * Project store (internal/umps-googled-theme.md|.css), override chrome vars
+ * here — top bar, panels, buttons, sheets — without dumping full legacy CSS.
+ */
+:root[data-app-theme='googled'] {
+  /* pending googled tokens */
+}
+
 *,
 *::before,
 *::after {
