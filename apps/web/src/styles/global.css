@@ -1,22 +1,66 @@
 :root {
-  color-scheme: dark;
-  --bg: #14181c;
-  --bg-elev: #1c2228;
-  --bg-stage: radial-gradient(120% 80% at 50% 30%, #2a323a 0%, #12161a 55%, #0b0e11 100%);
-  --line: rgba(232, 224, 208, 0.12);
-  --text: #ebe6dc;
-  --text-dim: #9aa3ad;
-  --accent: #d4a040;
-  --accent-ink: #1a1408;
-  --focus: #7eb8c9;
-  --danger: #c46b5a;
+  /* Structural tokens (theme-independent) */
   --radius: 10px;
   --font-ui: 'IBM Plex Sans', 'Segoe UI', sans-serif;
   --font-card: 'Source Serif 4', Georgia, serif;
-  --shadow-stage: 0 24px 60px rgba(0, 0, 0, 0.45);
   --topbar-h: 3.5rem;
   --inspector-w: min(22rem, 100%);
   --safe-b: env(safe-area-inset-bottom, 0px);
+
+  /* Default chrome = googled (legacy UMPS single app theme) */
+  color-scheme: light;
+  --sb-bg: #f0f0e8;
+  --sb-surface: #ffffff;
+  --sb-surface-soft: #f3f5f7;
+  --sb-surface-elevated: #ffffff;
+  --sb-border: #d1d5db;
+  --sb-text-strong: #1f2937;
+  --sb-text: #374151;
+  --sb-text-muted: #5f6368;
+  --sb-accent: #4285f4;
+  --sb-accent-hover: #1a73e8;
+  --sb-accent-active: #0f9d58;
+  --sb-shadow-soft: 0 1px 2px rgba(60, 64, 67, 0.15), 0 4px 10px rgba(60, 64, 67, 0.1);
+  --gg-blue: #4285f4;
+  --gg-red: #db4437;
+  --gg-yellow: #f4b400;
+  --gg-green: #0f9d58;
+  --gg-core-blue: #1a73e8;
+  --gg-grey: #5f6368;
+  --gg-cloud: #f0f0e8;
+
+  --bg: var(--sb-bg);
+  --bg-elev: var(--sb-surface);
+  --bg-stage:
+    radial-gradient(760px 380px at 82% -8%, color-mix(in srgb, var(--gg-core-blue) 18%, transparent), transparent 72%),
+    radial-gradient(620px 320px at 16% -4%, color-mix(in srgb, var(--gg-yellow) 14%, transparent), transparent 72%),
+    linear-gradient(180deg, #ffffff 0%, #f0f0e8 100%);
+  --line: color-mix(in srgb, var(--sb-border) 85%, transparent);
+  --text: var(--sb-text);
+  --text-dim: var(--sb-text-muted);
+  --accent: var(--sb-accent);
+  --accent-ink: #ffffff;
+  --focus: var(--gg-core-blue);
+  --danger: #b91c1c;
+  --shadow-stage: var(--sb-shadow-soft);
+}
+
+[data-app-theme='googled'] {
+  color-scheme: light;
+  --bg: var(--sb-bg);
+  --bg-elev: var(--sb-surface);
+  --bg-stage:
+    radial-gradient(760px 380px at 82% -8%, color-mix(in srgb, var(--gg-core-blue) 18%, transparent), transparent 72%),
+    radial-gradient(620px 320px at 16% -4%, color-mix(in srgb, var(--gg-yellow) 14%, transparent), transparent 72%),
+    linear-gradient(180deg, #ffffff 0%, #f0f0e8 100%);
+  --line: color-mix(in srgb, var(--sb-border) 85%, transparent);
+  --text: var(--sb-text);
+  --text-dim: var(--sb-text-muted);
+  --accent: var(--sb-accent);
+  --accent-ink: #ffffff;
+  --focus: var(--gg-core-blue);
+  --danger: #b91c1c;
+  --shadow-stage: var(--sb-shadow-soft);
 }
 
 *,

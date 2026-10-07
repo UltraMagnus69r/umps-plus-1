@@ -31,7 +31,7 @@ export function EditorShell() {
   }, [setInspectorOpen])
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} data-app-theme="googled">
       <header className={styles.topbar}>
         <div className={styles.brandBlock}>
           <span className={styles.brand}>UMPS+1</span>

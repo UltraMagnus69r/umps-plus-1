@@ -46,7 +46,7 @@
   padding: 0.2rem;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.22);
+  background: color-mix(in srgb, var(--sb-surface-soft, var(--bg)) 88%, var(--sb-border, var(--line)));
 }
 
 .modeBtn,
@@ -180,7 +180,7 @@
 .field input[type='color'] {
   width: 100%;
   border: 1px solid var(--line);
-  background: rgba(0, 0, 0, 0.25);
+  background: color-mix(in srgb, var(--sb-surface-soft, var(--bg-elev)) 92%, var(--sb-border, var(--line)));
   border-radius: var(--radius);
   padding: 0.55rem 0.7rem;
   color: var(--text);
@@ -306,7 +306,7 @@
   padding: 0.3rem;
   border-radius: var(--radius);
   border: 1px solid var(--line);
-  background: rgba(0, 0, 0, 0.22);
+  background: color-mix(in srgb, var(--sb-surface-soft, var(--bg-elev)) 90%, var(--sb-border, var(--line)));
   color: var(--text);
   text-align: left;
   cursor: pointer;
