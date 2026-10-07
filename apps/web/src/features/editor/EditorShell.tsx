@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Inspector } from '@/features/editor/Inspector'
+import { useCardVault } from '@/features/scryfall/useCardVault'
 import { CardStage, type CardStageHandle } from '@/renderer/CardStage'
 import { useCardStore, type EditorMode } from '@/store/cardStore'
 import styles from '@/styles/shell.module.css'
@@ -7,6 +8,7 @@ import styles from '@/styles/shell.module.css'
 const MODES: { id: EditorMode; label: string }[] = [
   { id: 'edit', label: 'Edit' },
   { id: 'art', label: 'Art' },
+  { id: 'scryfall', label: 'Scryfall' },
   { id: 'export', label: 'Export' },
 ]
 
@@ -17,6 +19,8 @@ export function EditorShell() {
   const inspectorOpen = useCardStore((s) => s.inspectorOpen)
   const setInspectorOpen = useCardStore((s) => s.setInspectorOpen)
   const stageRef = useRef<CardStageHandle | null>(null)
+
+  useCardVault()
 
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 960px)')

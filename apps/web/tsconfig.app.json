@@ -20,8 +20,10 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@umps-plus-1/scryfall": ["../../packages/scryfall/src/index.ts"],
+      "@umps-plus-1/scryfall/*": ["../../packages/scryfall/src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "../../packages/scryfall/src"]
 }

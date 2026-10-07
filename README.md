@@ -1,6 +1,10 @@
 # UMPS+1
 
-Greenfield ground-up custom card editor. Phase 1: Vite/React web app with a card-first responsive shell, 600 DPI stage math, and flattened PNG export (pHYs tagged).
+Greenfield custom card editor. Print-ready Magic proxies from Scryfall + custom cards.
+
+Phase 1: Vite/React web app with a card-first responsive shell, 600 DPI stage math, and flattened PNG export (pHYs tagged).
+
+Phase 2: Scryfall import (online) + light IndexedDB vault for the current card/art.
 
 Legacy UMPS is archive-only and is not part of this tree.
 
@@ -12,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Open the URL Vite prints (default `http://localhost:5173`).
+Open the URL Vite prints (default `http://localhost:43129`).
 
 ```bash
 npm run build    # production build → apps/web/dist
@@ -31,7 +35,20 @@ nvm install 22
 
 Then `node -v` / `npm -v` should work. On Fedora you can also use `sudo dnf install nodejs npm` if you prefer system packages.
 
-## Phase 1 scope
+## Scryfall (Phase 2)
+
+Scryfall lookup is **online-only**. The typed client lives in [`packages/scryfall`](packages/scryfall) and is used from the **Scryfall** mode chip in the editor.
+
+- Fuzzy name, optional set code, `SET 123` collector shortcut, or paste a Scryfall card URL
+- Loads printings (`unique=prints`) so you can pick a print, then **Apply to card** (name, mana, type, oracle, P/T, `art_crop` art)
+- Requests are lightly rate-gated (~110 ms); UA identifies as `UMPS-Plus-1/0.1` when the runtime allows it
+- Needs a network path to `api.scryfall.com` / `cards.scryfall.io` — there is no offline card database in this slice
+
+The last edited card (fields + art blob) is kept in an IndexedDB vault so a refresh restores your work. Scryfall search itself still requires the network.
+
+## Phase scope
+
+**Phase 1**
 
 - Custom card fields: name, mana, type line, rules, P/T
 - Art upload + basic placement (scale / pan)
@@ -39,7 +56,12 @@ Then `node -v` / `npm -v` should work. On Fedora you can also use `sudo dnf inst
 - PNG export with **pHYs 600 DPI** (flattened)
 - Responsive editor shell — see [`docs/architecture/editor-shell.md`](docs/architecture/editor-shell.md)
 
-Not in Phase 1: Scryfall, asset library copy, print sheets, Tauri/Capacitor, multi-user, layered export, Warframe.
+**Phase 2 (this)**
+
+- Scryfall client + UI apply flow
+- Light offline vault (current card + art)
+
+Not yet: bulk KEEP/asset library port, print sheets, Tauri/Capacitor, transparent layer packs, multi-user, Warframe.
 
 ## Folder map
 
@@ -49,7 +71,7 @@ apps/
     public/assets/     frames, borders, mana, fonts, print, card-parts (future)
     src/app/           app entry shell
     src/domain/        card, layout, geometry, export
-    src/features/      editor (+ future scryfall, print, …)
+    src/features/      editor, scryfall, …
     src/renderer/      canvas stage
     src/store/         tiny zustand slice
     src/styles/
@@ -57,7 +79,7 @@ apps/
   mobile/              Capacitor shell (future)
 packages/
   geometry/            shared math (future; Phase 1 in apps/web)
-  scryfall/            future
+  scryfall/            typed Scryfall HTTP adapter
   export/              future
 assets-incoming/       curated ports from legacy (empty for now)
 docs/

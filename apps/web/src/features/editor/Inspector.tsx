@@ -12,6 +12,7 @@ import {
   TRIM_HEIGHT,
   TRIM_WIDTH,
 } from '@/domain/geometry/constants'
+import { ScryfallPanel } from '@/features/scryfall/ScryfallPanel'
 import type { CardStageHandle } from '@/renderer/CardStage'
 import { useCardStore, type EditorMode } from '@/store/cardStore'
 import styles from '@/styles/shell.module.css'
@@ -202,6 +203,7 @@ function ExportPanel({ stageRef }: Props) {
 const TITLES: Record<EditorMode, string> = {
   edit: 'Edit',
   art: 'Art',
+  scryfall: 'Scryfall',
   export: 'Export',
 }
 
@@ -229,6 +231,7 @@ export function Inspector({ stageRef }: Props) {
       <div className={styles.inspectorBody}>
         {mode === 'edit' && <EditPanel />}
         {mode === 'art' && <ArtPanel />}
+        {mode === 'scryfall' && <ScryfallPanel />}
         {mode === 'export' && <ExportPanel stageRef={stageRef} />}
       </div>
     </aside>

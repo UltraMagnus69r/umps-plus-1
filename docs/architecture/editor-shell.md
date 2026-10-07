@@ -1,8 +1,8 @@
-# Editor shell IA (Phase 1)
+# Editor shell IA (Phase 1–2)
 
 ## Chosen layout
 
-**Single-stage focus** with the card preview as the hero. Chrome is a slim top bar: **UMPS+1** brand + compact **Edit / Art / Export** segmented control. Editing controls live in one inspector that changes with the mode — never a permanent left/right sidebar pair and never a bottom tool strip competing with the stage.
+**Single-stage focus** with the card preview as the hero. Chrome is a slim top bar: **UMPS+1** brand + compact **Edit / Art / Scryfall / Export** segmented control. Editing controls live in one inspector that changes with the mode — never a permanent left/right sidebar pair and never a bottom tool strip competing with the stage.
 
 ## Breakpoints
 
@@ -15,6 +15,7 @@
 
 - **Edit** — name, mana, type line, rules, P/T, face color
 - **Art** — upload, scale, pan, clear
+- **Scryfall** — online search, prints picker, apply to card (Phase 2)
 - **Export** — flattened PNG @ 600 DPI (pHYs), geometry notes, reset
 
 ## Why not legacy

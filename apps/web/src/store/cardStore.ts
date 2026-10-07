@@ -5,7 +5,7 @@ import {
   type CardDocument,
 } from '@/domain/card/document'
 
-export type EditorMode = 'edit' | 'art' | 'export'
+export type EditorMode = 'edit' | 'art' | 'scryfall' | 'export'
 
 type CardState = {
   card: CardDocument
@@ -16,6 +16,8 @@ type CardState = {
   patchCard: (patch: Partial<CardDocument>) => void
   patchArt: (patch: Partial<ArtPlacement>) => void
   setArtUrl: (url: string | null) => void
+  /** Replace the whole document (vault hydrate). Revokes prior blob art. */
+  replaceCard: (card: CardDocument) => void
   resetCard: () => void
 }
 
@@ -32,6 +34,13 @@ export const useCardStore = create<CardState>((set, get) => ({
     const prev = get().card.artUrl
     if (prev && prev.startsWith('blob:')) URL.revokeObjectURL(prev)
     set({ card: { ...get().card, artUrl: url } })
+  },
+  replaceCard: (card) => {
+    const prev = get().card.artUrl
+    if (prev && prev.startsWith('blob:') && prev !== card.artUrl) {
+      URL.revokeObjectURL(prev)
+    }
+    set({ card })
   },
   resetCard: () => {
     const prev = get().card.artUrl

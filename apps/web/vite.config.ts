@@ -7,10 +7,14 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@umps-plus-1/scryfall': fileURLToPath(
+        new URL('../../packages/scryfall/src/index.ts', import.meta.url),
+      ),
     },
   },
   server: {
     host: true,
-    port: 5173,
+    port: 43129,
+    strictPort: true,
   },
 })
