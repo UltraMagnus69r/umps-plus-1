@@ -1,14 +1,24 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import type { CardDocument } from '@/domain/card/document'
-import { renderCardCanvas } from '@/domain/export/render'
+import type { ExportSizeMode, FlattenExportOptions } from '@/domain/export/render'
+import {
+  exportFlattenedPng as exportFlattenedPngBlob,
+  exportLayerPackZip as exportLayerPackZipBlob,
+  renderCardCanvas,
+  renderLayerCanvas,
+} from '@/domain/export/render'
 import { STAGE_HEIGHT, STAGE_WIDTH } from '@/domain/geometry/constants'
-import { drawCard } from '@/renderer/drawCard'
+import { drawCard, type CardLayerId } from '@/renderer/drawCard'
 import styles from '@/styles/shell.module.css'
 
 export type CardStageHandle = {
   /** Live art bitmap used by the stage (may be null). */
   getArtImage: () => HTMLImageElement | null
-  /** Full-bleed opaque flatten helper. */
+  renderFlattened: (opts: FlattenExportOptions) => HTMLCanvasElement
+  renderLayer: (layer: CardLayerId, sizeMode: ExportSizeMode) => HTMLCanvasElement
+  exportFlattenedPng: (opts: FlattenExportOptions) => Promise<Blob>
+  exportLayerPackZip: (sizeMode: ExportSizeMode) => Promise<Blob>
+  /** @deprecated Prefer renderFlattened / exportFlattenedPng */
   exportCanvas: () => HTMLCanvasElement
 }
 
@@ -31,8 +41,18 @@ export function CardStage({ card, showGuides = false, stageRef }: Props) {
 
   useEffect(() => {
     if (!stageRef) return
+    // Bind once; read live card/art through refs so exports stay current
+    // without recreating the handle (avoids HMR/stale-method gaps).
     stageRef.current = {
       getArtImage: () => artImageRef.current,
+      renderFlattened: (opts) =>
+        renderCardCanvas(cardRef.current, artImageRef.current, opts),
+      renderLayer: (layer, sizeMode) =>
+        renderLayerCanvas(cardRef.current, artImageRef.current, layer, sizeMode),
+      exportFlattenedPng: (opts) =>
+        exportFlattenedPngBlob(cardRef.current, artImageRef.current, opts),
+      exportLayerPackZip: (sizeMode) =>
+        exportLayerPackZipBlob(cardRef.current, artImageRef.current, sizeMode),
       exportCanvas: () =>
         renderCardCanvas(cardRef.current, artImageRef.current, {
           sizeMode: 'bleed',
