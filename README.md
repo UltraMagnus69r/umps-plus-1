@@ -21,6 +21,16 @@ npm run preview  # serve the build locally
 
 Requires Node 20+ (Node 22/24 fine) with `npm` on your PATH.
 
+If `npm: command not found`, install Node via [nvm](https://github.com/nvm-sh/nvm) (user-space; no sudo):
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+# open a new terminal, or: source ~/.bashrc
+nvm install 22
+```
+
+Then `node -v` / `npm -v` should work. On Fedora you can also use `sudo dnf install nodejs npm` if you prefer system packages.
+
 ## Phase 1 scope
 
 - Custom card fields: name, mana, type line, rules, P/T
