@@ -1,10 +1,24 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import type { CardDocument } from '@/domain/card/document'
+import type { ExportSizeMode, FlattenExportOptions } from '@/domain/export/render'
+import {
+  exportFlattenedPng,
+  exportLayerPackZip,
+  renderCardCanvas,
+  renderLayerCanvas,
+} from '@/domain/export/render'
 import { STAGE_HEIGHT, STAGE_WIDTH } from '@/domain/geometry/constants'
-import { drawCard } from '@/renderer/drawCard'
+import { drawCard, type CardLayerId } from '@/renderer/drawCard'
 import styles from '@/styles/shell.module.css'
 
 export type CardStageHandle = {
+  /** Live art bitmap used by the stage (may be null). */
+  getArtImage: () => HTMLImageElement | null
+  renderFlattened: (opts: FlattenExportOptions) => HTMLCanvasElement
+  renderLayer: (layer: CardLayerId, sizeMode: ExportSizeMode) => HTMLCanvasElement
+  exportFlattenedPng: (opts: FlattenExportOptions) => Promise<Blob>
+  exportLayerPackZip: (sizeMode: ExportSizeMode) => Promise<Blob>
+  /** @deprecated Prefer renderFlattened / exportFlattenedPng */
   exportCanvas: () => HTMLCanvasElement
 }
 
@@ -23,15 +37,13 @@ export function CardStage({ card, showGuides = false, stageRef }: Props) {
   useEffect(() => {
     if (!stageRef) return
     stageRef.current = {
-      exportCanvas: () => {
-        const exportCanvas = document.createElement('canvas')
-        exportCanvas.width = STAGE_WIDTH
-        exportCanvas.height = STAGE_HEIGHT
-        const ctx = exportCanvas.getContext('2d')
-        if (!ctx) throw new Error('Could not create export canvas')
-        drawCard(ctx, card, artImage, { showGuides: false })
-        return exportCanvas
-      },
+      getArtImage: () => artImage,
+      renderFlattened: (opts) => renderCardCanvas(card, artImage, opts),
+      renderLayer: (layer, sizeMode) =>
+        renderLayerCanvas(card, artImage, layer, sizeMode),
+      exportFlattenedPng: (opts) => exportFlattenedPng(card, artImage, opts),
+      exportLayerPackZip: (sizeMode) => exportLayerPackZip(card, artImage, sizeMode),
+      exportCanvas: () => renderCardCanvas(card, artImage, { sizeMode: 'bleed' }),
     }
     return () => {
       stageRef.current = null

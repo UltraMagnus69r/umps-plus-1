@@ -11,7 +11,14 @@ import { SLOTS, type StageRect } from '@/domain/layout/slots'
 
 export type DrawOptions = {
   showGuides?: boolean
+  /** When true, skip the opaque bleed/backplate fill. */
+  transparent?: boolean
 }
+
+/** Logical layers matching the renderer stack (export pack order). */
+export type CardLayerId = 'art' | 'frame' | 'text'
+
+export const CARD_LAYER_IDS: CardLayerId[] = ['art', 'frame', 'text']
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -101,7 +108,7 @@ function drawTextInBox(
   ctx.restore()
 }
 
-function drawArt(
+function drawArtLayer(
   ctx: CanvasRenderingContext2D,
   card: CardDocument,
   image: HTMLImageElement | null,
@@ -111,8 +118,6 @@ function drawArt(
   ctx.beginPath()
   ctx.rect(box.x, box.y, box.width, box.height)
   ctx.clip()
-  ctx.fillStyle = '#2a3036'
-  ctx.fillRect(box.x, box.y, box.width, box.height)
 
   if (image && image.complete && image.naturalWidth > 0) {
     const coverScale = Math.max(
@@ -133,37 +138,26 @@ function drawArt(
     ctx.fillText('Art', box.x + box.width / 2, box.y + box.height / 2)
   }
   ctx.restore()
-
-  ctx.strokeStyle = 'rgba(40, 36, 30, 0.55)'
-  ctx.lineWidth = 4
-  ctx.strokeRect(box.x + 2, box.y + 2, box.width - 4, box.height - 4)
 }
 
-/** Draw the full-bleed card into a canvas context at stage resolution. */
-export function drawCard(
+function drawFrameLayer(
   ctx: CanvasRenderingContext2D,
   card: CardDocument,
-  artImage: HTMLImageElement | null,
-  opts: DrawOptions = {},
+  opts: DrawOptions,
 ): void {
-  ctx.save()
-  ctx.clearRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT)
+  if (!opts.transparent) {
+    ctx.fillStyle = '#0e1114'
+    ctx.fillRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT)
+  }
 
-  // Bleed fill
-  ctx.fillStyle = '#0e1114'
-  ctx.fillRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT)
-
-  // Face with trim silhouette
   roundRect(ctx, BLEED_PX, BLEED_PX, TRIM_WIDTH, TRIM_HEIGHT, TRIM_CORNER_RADIUS_PX)
   ctx.fillStyle = card.faceColor
   ctx.fill()
 
-  // Inner frame plate
   ctx.fillStyle = 'rgba(255,255,255,0.22)'
   roundRect(ctx, 128, 122, 1394, 1840, 36)
   ctx.fill()
 
-  // Name / type bars
   ctx.fillStyle = 'rgba(248, 244, 236, 0.92)'
   roundRect(ctx, SLOTS.nameBar.x, SLOTS.nameBar.y, SLOTS.nameBar.width, SLOTS.nameBar.height, 40)
   ctx.fill()
@@ -177,7 +171,6 @@ export function drawCard(
   )
   ctx.fill()
 
-  // Rules plate
   ctx.fillStyle = 'rgba(248, 244, 236, 0.88)'
   ctx.fillRect(
     SLOTS.rulesText.x,
@@ -186,8 +179,23 @@ export function drawCard(
     SLOTS.rulesText.height,
   )
 
-  drawArt(ctx, card, artImage)
+  // Art-box underlay + stroke (art pixels live on the art layer)
+  const box = SLOTS.artBox
+  ctx.fillStyle = opts.transparent ? 'rgba(42, 48, 54, 0.35)' : '#2a3036'
+  ctx.fillRect(box.x, box.y, box.width, box.height)
+  ctx.strokeStyle = 'rgba(40, 36, 30, 0.55)'
+  ctx.lineWidth = 4
+  ctx.strokeRect(box.x + 2, box.y + 2, box.width - 4, box.height - 4)
 
+  const pt = [card.power, card.toughness].filter((v) => v.trim()).join(' / ')
+  if (pt) {
+    ctx.fillStyle = 'rgba(248, 244, 236, 0.96)'
+    roundRect(ctx, SLOTS.ptBox.x, SLOTS.ptBox.y, SLOTS.ptBox.width, SLOTS.ptBox.height, 28)
+    ctx.fill()
+  }
+}
+
+function drawTextLayer(ctx: CanvasRenderingContext2D, card: CardDocument): void {
   drawTextInBox(ctx, card.name, SLOTS.nameBar, {
     font: '600 64px "Source Serif 4", Georgia, serif',
     color: '#1b1a17',
@@ -222,9 +230,6 @@ export function drawCard(
 
   const pt = [card.power, card.toughness].filter((v) => v.trim()).join(' / ')
   if (pt) {
-    ctx.fillStyle = 'rgba(248, 244, 236, 0.96)'
-    roundRect(ctx, SLOTS.ptBox.x, SLOTS.ptBox.y, SLOTS.ptBox.width, SLOTS.ptBox.height, 28)
-    ctx.fill()
     drawTextInBox(ctx, pt, SLOTS.ptBox, {
       font: '600 56px "IBM Plex Sans", sans-serif',
       color: '#1b1a17',
@@ -233,17 +238,52 @@ export function drawCard(
       paddingX: 12,
     })
   }
+}
 
-  if (opts.showGuides) {
-    ctx.save()
-    ctx.strokeStyle = 'rgba(212, 160, 64, 0.85)'
-    ctx.lineWidth = 3
-    ctx.setLineDash([18, 14])
-    ctx.strokeRect(BLEED_PX, BLEED_PX, TRIM_WIDTH, TRIM_HEIGHT)
-    ctx.strokeStyle = 'rgba(120, 180, 200, 0.7)'
-    ctx.strokeRect(BLEED_PX * 2, BLEED_PX * 2, TRIM_WIDTH - BLEED_PX * 2, TRIM_HEIGHT - BLEED_PX * 2)
-    ctx.restore()
+function drawGuides(ctx: CanvasRenderingContext2D): void {
+  ctx.save()
+  ctx.strokeStyle = 'rgba(212, 160, 64, 0.85)'
+  ctx.lineWidth = 3
+  ctx.setLineDash([18, 14])
+  ctx.strokeRect(BLEED_PX, BLEED_PX, TRIM_WIDTH, TRIM_HEIGHT)
+  ctx.strokeStyle = 'rgba(120, 180, 200, 0.7)'
+  ctx.strokeRect(BLEED_PX * 2, BLEED_PX * 2, TRIM_WIDTH - BLEED_PX * 2, TRIM_HEIGHT - BLEED_PX * 2)
+  ctx.restore()
+}
+
+/** Draw a single logical layer onto a cleared transparent stage. */
+export function drawCardLayer(
+  ctx: CanvasRenderingContext2D,
+  card: CardDocument,
+  artImage: HTMLImageElement | null,
+  layer: CardLayerId,
+  opts: DrawOptions = {},
+): void {
+  ctx.save()
+  ctx.clearRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT)
+  if (layer === 'art') {
+    drawArtLayer(ctx, card, artImage)
+  } else if (layer === 'frame') {
+    // Layer packs always omit the opaque bleed backplate.
+    drawFrameLayer(ctx, card, { ...opts, transparent: true })
+  } else {
+    drawTextLayer(ctx, card)
   }
+  ctx.restore()
+}
 
+/** Draw the full-bleed card into a canvas context at stage resolution. */
+export function drawCard(
+  ctx: CanvasRenderingContext2D,
+  card: CardDocument,
+  artImage: HTMLImageElement | null,
+  opts: DrawOptions = {},
+): void {
+  ctx.save()
+  ctx.clearRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT)
+  drawFrameLayer(ctx, card, opts)
+  drawArtLayer(ctx, card, artImage)
+  drawTextLayer(ctx, card)
+  if (opts.showGuides) drawGuides(ctx)
   ctx.restore()
 }

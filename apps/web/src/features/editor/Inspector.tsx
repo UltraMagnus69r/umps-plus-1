@@ -1,17 +1,5 @@
 import { useRef, type ReactNode, type RefObject } from 'react'
-import {
-  downloadBlob,
-  exportCanvasPng600Dpi,
-  safeFilename,
-} from '@/domain/export/png'
-import {
-  BLEED_PX,
-  DPI,
-  STAGE_HEIGHT,
-  STAGE_WIDTH,
-  TRIM_HEIGHT,
-  TRIM_WIDTH,
-} from '@/domain/geometry/constants'
+import { ExportPanel } from '@/features/editor/ExportPanel'
 import { ScryfallPanel } from '@/features/scryfall/ScryfallPanel'
 import type { CardStageHandle } from '@/renderer/CardStage'
 import { useCardStore, type EditorMode } from '@/store/cardStore'
@@ -167,34 +155,6 @@ function ArtPanel() {
         onClick={() => patchArt({ offsetX: 0, offsetY: 0, scale: 1 })}
       >
         Reset placement
-      </button>
-    </div>
-  )
-}
-
-function ExportPanel({ stageRef }: Props) {
-  const card = useCardStore((s) => s.card)
-  const resetCard = useCardStore((s) => s.resetCard)
-
-  const onExport = async () => {
-    const handle = stageRef.current
-    if (!handle) return
-    const canvas = handle.exportCanvas()
-    const blob = await exportCanvasPng600Dpi(canvas)
-    downloadBlob(blob, `${safeFilename(card.name)}-600dpi.png`)
-  }
-
-  return (
-    <div className={styles.panelStack}>
-      <p className={styles.muted}>
-        Flattened PNG at full bleed {STAGE_WIDTH}×{STAGE_HEIGHT} with pHYs {DPI}{' '}
-        DPI. Bleed {BLEED_PX}px/side; trim {TRIM_WIDTH}×{TRIM_HEIGHT}.
-      </p>
-      <button type="button" className={styles.primaryBtn} onClick={() => void onExport()}>
-        Export PNG
-      </button>
-      <button type="button" className={styles.ghostBtn} onClick={resetCard}>
-        Reset card
       </button>
     </div>
   )

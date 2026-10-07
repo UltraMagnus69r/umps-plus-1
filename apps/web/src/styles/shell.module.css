@@ -345,6 +345,126 @@
   text-overflow: ellipsis;
 }
 
+.exportTabs {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 0.15rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sb-surface-soft, var(--bg)) 88%, var(--sb-border, var(--line)));
+}
+
+.exportTab,
+.exportTabActive {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-dim);
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.exportTabActive {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.segField {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.segField legend {
+  padding: 0;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.segRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.segBtn,
+.segActive {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.segActive {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.checkRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.checkRow input {
+  margin-top: 0.15rem;
+  accent-color: var(--accent);
+}
+
+.queueList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.queueItem {
+  display: grid;
+  grid-template-columns: 3.25rem 1fr;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--sb-surface-soft, var(--bg-elev)) 90%, var(--sb-border, var(--line)));
+}
+
+.queueThumb {
+  width: 3.25rem;
+  aspect-ratio: 5 / 7;
+  object-fit: cover;
+  border-radius: 2px;
+  background: #1a1e22;
+}
+
+.queueMeta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.queueName {
+  font-size: 0.82rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (min-width: 960px) {
   .mobileToggle {
     visibility: hidden;

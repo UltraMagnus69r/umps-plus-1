@@ -1,4 +1,4 @@
-# Editor shell IA (Phase 1–2)
+# Editor shell IA (Phase 1–3)
 
 ## Chosen layout
 
@@ -16,7 +16,7 @@
 - **Edit** — name, mana, type line, rules, P/T, face color
 - **Art** — upload, scale, pan, clear
 - **Scryfall** — online search, prints picker, apply to card (Phase 2)
-- **Export** — flattened PNG @ 600 DPI (pHYs), geometry notes, reset
+- **Export** — File tab: bleed/trim, flattened PNG @ 600 DPI (pHYs), transparent PNG, layer-pack ZIP. Print tab: queue, Letter 8-up sheets, optional backs. Reset card.
 
 ## Why not legacy
 
